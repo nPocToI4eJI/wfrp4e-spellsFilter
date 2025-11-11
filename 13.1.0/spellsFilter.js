@@ -60,7 +60,7 @@ Hooks.on("renderActorSheetV2", (app, html, sheet) => {
 				game.settings.set('wfrp4e-assistant', 'spellFilter', game.i18n.localize('WFRP4E.Assistant.spellsFilter.Categories.All'));
 				this.innerHTML = '<i class=&quot;fas fa-list&quot;></i>';
 			};
-			this.dataset.tooltip = game.settings.get('wfrp4e-assistant', 'spellFilter');
+			this.dataset.tooltip = '<h6 style=&quot;text-align: center;&quot;>' + game.settings.get('wfrp4e-assistant', 'spellFilter') + '</h6>' + game.i18n.localize('WFRP4E.Assistant.spellsFilter.Hint');
 
 			let elements = this.closest('.list-header').nextElementSibling.children;
 			for (let i = 0; i < elements.length; i++) {
@@ -88,7 +88,7 @@ Hooks.on("renderActorSheetV2", (app, html, sheet) => {
 				break;
 			}
 		};
-		let button = `<a class="list-button" data-tooltip="${game.settings.get("wfrp4e-assistant", "spellFilter")}" onclick="${onClick}" oncontextmenu="${onRightClick}">${icon}</a>`;
+		let button = `<a class="list-button" data-tooltip="<h6 style='text-align: center;'>${game.settings.get("wfrp4e-assistant", "spellFilter")}</h6>${game.i18n.localize('WFRP4E.Assistant.spellsFilter.Hint')}" onclick="${onClick}" oncontextmenu="${onRightClick}">${icon}</a>`;
 		html.querySelector("section[data-tab='magic']>.sheet-list.spells>.list-header>.list-name").insertAdjacentHTML("beforeend", button);
 
 		let elements = html.querySelector("section[data-tab='magic']>.sheet-list.spells>.list-content").children;
