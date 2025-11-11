@@ -22,7 +22,21 @@ Hooks.once("init", function () {
 });
 
 Hooks.on("renderActorSheetV2", (app, html, sheet) => {
+	function checkFilters() {
+		let filters = [game.i18n.localize("WFRP4E.Assistant.spellsFilter.Categories.All"), game.i18n.localize("WFRP4E.Assistant.spellsFilter.Categories.Combat"), game.i18n.localize("WFRP4E.Assistant.spellsFilter.Categories.Research"), game.i18n.localize("WFRP4E.Assistant.spellsFilter.Categories.Other")]
+		if (!filters.includes(game.settings.get("wfrp4e-assistant", "spellFilter"))) {
+			game.settings.set("wfrp4e-assistant", "spellFilter", game.i18n.localize("WFRP4E.Assistant.spellsFilter.Categories.All"));
+			let newFilters = {};
+			filters.shift();
+			for (let key in game.settings.get("wfrp4e-assistant", "spellFilterLists")) {
+				Object.assign(newFilters, {[filters[0]]: game.settings.get("wfrp4e-assistant", "spellFilterLists")[key]});
+				filters.shift();
+			};
+			game.settings.set("wfrp4e-assistant", "spellFilterLists", newFilters);
+		};
+	};
 	if (game.settings.get("wfrp4e-assistant", "enabled") && game.user.character?.id == sheet.document.id && sheet.document.hasSpells) {
+		checkFilters();
 		let spellsLists = JSON.stringify(sheet.document.itemTypes.spell.filter(s => s.lore.value != 'petty').map(s => ({'name': s.name, 'img': s.img, 'uuid': s.uuid}))).replace(/\"/g, "'");
 		let onRightClick = `
 			let async = async (spells) => {
@@ -33,7 +47,7 @@ Hooks.on("renderActorSheetV2", (app, html, sheet) => {
 
 				let elements = this.closest('.list-header').nextElementSibling.children;
 				for (let i = 0; i < elements.length; i++) {
-					if (!game.settings.get('wfrp4e-assistant', 'spellFilterLists')[game.settings.get('wfrp4e-assistant', 'spellFilter')].includes(elements[i].dataset.uuid)) {elements[i].style.display = 'none'}
+					if (!game.settings.get('wfrp4e-assistant', 'spellFilterLists')[game.settings.get('wfrp4e-assistant', 'spellFilter')]?.includes(elements[i].dataset.uuid)) {elements[i].style.display = 'none'}
 					else {elements[i].style.display = 'flex'};
 				};
 			};
@@ -64,7 +78,7 @@ Hooks.on("renderActorSheetV2", (app, html, sheet) => {
 
 			let elements = this.closest('.list-header').nextElementSibling.children;
 			for (let i = 0; i < elements.length; i++) {
-				if (game.settings.get('wfrp4e-assistant', 'spellFilter') != game.i18n.localize('WFRP4E.Assistant.spellsFilter.Categories.All') && !game.settings.get('wfrp4e-assistant', 'spellFilterLists')[game.settings.get('wfrp4e-assistant', 'spellFilter')].includes(elements[i].dataset.uuid)) {elements[i].style.display = 'none'}
+				if (game.settings.get('wfrp4e-assistant', 'spellFilter') != game.i18n.localize('WFRP4E.Assistant.spellsFilter.Categories.All') && !game.settings.get('wfrp4e-assistant', 'spellFilterLists')[game.settings.get('wfrp4e-assistant', 'spellFilter')]?.includes(elements[i].dataset.uuid)) {elements[i].style.display = 'none'}
 				else {elements[i].style.display = 'flex'};
 			};
 		`;
@@ -93,7 +107,7 @@ Hooks.on("renderActorSheetV2", (app, html, sheet) => {
 
 		let elements = html.querySelector("section[data-tab='magic']>.sheet-list.spells>.list-content").children;
 		for (let i = 0; i < elements.length; i++) {
-			if (game.settings.get('wfrp4e-assistant', 'spellFilter') != game.i18n.localize('WFRP4E.Assistant.spellsFilter.Categories.All') && !game.settings.get('wfrp4e-assistant', 'spellFilterLists')[game.settings.get('wfrp4e-assistant', 'spellFilter')].includes(elements[i].dataset.uuid)) {elements[i].style.display = 'none'}
+			if (game.settings.get('wfrp4e-assistant', 'spellFilter') != game.i18n.localize('WFRP4E.Assistant.spellsFilter.Categories.All') && !game.settings.get('wfrp4e-assistant', 'spellFilterLists')[game.settings.get('wfrp4e-assistant', 'spellFilter')]?.includes(elements[i].dataset.uuid)) {elements[i].style.display = 'none'}
 			else {elements[i].style.display = 'flex'};
 		};
 	};
